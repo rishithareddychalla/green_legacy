@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Copy, CheckCircle, QrCode, CreditCard } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 const Payment = () => {
   const location = useLocation();
@@ -55,7 +54,6 @@ const Payment = () => {
     setProcessing(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const finalPaymentId = paymentType === 'upi' ? paymentId : `CARD_${Date.now()}`;
 
       // Record donation in backend
@@ -79,7 +77,7 @@ const Payment = () => {
       });
 
       // Continue flow
-      if (session?.user) {
+      if (isLoggedIn()) {
         navigate('/dashboard');
       } else {
         navigate('/choose-tree', { 
@@ -94,7 +92,7 @@ const Payment = () => {
           } 
         });
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error confirming payment:', error);
       toast.error('Failed to record payment. Please contact support.');
     } finally {

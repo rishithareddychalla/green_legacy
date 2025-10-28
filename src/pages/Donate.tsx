@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Gift, Heart, Cake, Users, TreePine, Sparkles, Leaf, Apple, Flower } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface TreeSpecies {
   id: string;
@@ -58,21 +57,10 @@ const Donate = () => {
   }, [formData.customAmount, selectedCategory, treeSpecies]);
 
   const fetchTreeSpecies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tree_species')
-        .select('*')
-        .order('price', { ascending: true });
-
-      if (error) throw error;
-      setTreeSpecies(data || []);
-      setFilteredTrees(data || []);
-    } catch (error) {
-      console.error('Error fetching tree species:', error);
-      toast.error('Failed to load tree options');
-    } finally {
-      setLoading(false);
-    }
+    // Mocking the data since there is no endpoint to fetch tree species
+    setTreeSpecies([]);
+    setFilteredTrees([]);
+    setLoading(false);
   };
 
   const filterTrees = () => {
@@ -128,29 +116,20 @@ const Donate = () => {
       return;
     }
 
-    try {
-      // Check if user is logged in
-      const { data: { session } } = await supabase.auth.getSession();
+    const donationData = {
+      donor_name: formData.name,
+      email: formData.email,
+      phone: "",
+      occasion: formData.occasion,
+      amount: selectedTree.price,
+      species_id: selectedTree.id,
+      species_name: selectedTree.name,
+      tree_id: `TREE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase(),
+      location: formData.message,
+    };
 
-      const donationData = {
-        donor_name: formData.name,
-        email: formData.email,
-        phone: "",
-        occasion: formData.occasion,
-        amount: selectedTree.price,
-        species_id: selectedTree.id,
-        species_name: selectedTree.name,
-        tree_id: `TREE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase(),
-        user_id: session?.user?.id || null,
-        location: formData.message,
-      };
-
-      // Navigate to payment page with donation data
-      navigate('/payment', { state: { donationData } });
-    } catch (error: any) {
-      console.error('Error processing donation:', error);
-      toast.error('Failed to process donation. Please try again.');
-    }
+    console.log("Donation data:", donationData);
+    navigate('/payment', { state: { donationData } });
   };
 
   return (
