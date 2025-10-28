@@ -180,7 +180,7 @@
 // };
 
 // export default Auth;
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -189,6 +189,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { TreePine } from "lucide-react";
+import { login, signup } from "@/lib/auth";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -196,34 +197,17 @@ const Auth = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ email: "", password: "", confirmPassword: "" });
 
-  useEffect(() => {
-    // Placeholder for future auth session check if backend adds auth
-  }, []);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: loginData.email,
-          password: loginData.password,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || "Invalid credentials");
-      }
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
+      await login(loginData.email, loginData.password);
       toast.success("Successfully logged in!");
       navigate("/dashboard"); // Redirect to the dashboard after login
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Login failed", {
-        description: error.message || "Invalid credentials"
+        description: error instanceof Error ? error.message : "Invalid credentials"
       });
     } finally {
       setLoading(false);
@@ -246,29 +230,15 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: signupData.email.split('@')[0],
-          email: signupData.email,
-          password: signupData.password,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || "Could not create account");
-      }
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
+      await signup(signupData.email.split('@')[0], signupData.email, signupData.password);
       toast.success("Account created successfully!", {
         description: "You can now log in with your credentials"
       });
       setSignupData({ email: "", password: "", confirmPassword: "" });
       navigate("/dashboard"); // Redirect to the dashboard after signup
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Signup failed", {
-        description: error.message || "Could not create account"
+        description: error instanceof Error ? error.message : "Could not create account"
       });
     } finally {
       setLoading(false);

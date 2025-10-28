@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Leaf, Droplet, Wind, Download, MapPin, LogOut, User as UserIcon } from "lucide-react";
@@ -30,76 +29,22 @@ interface Profile {
 }
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [trees, setTrees] = useState<TreeData[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    // Mocking the data since there is no endpoint to fetch dashboard data
+    setProfile({ full_name: "Donor", email: "donor@example.com" });
+    setTrees([]);
+    setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-    }
-  }, [user]);
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-
-      // Fetch profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single();
-
-      setProfile(profileData);
-
-      // Fetch user's trees
-      const { data: treesData, error } = await supabase
-        .from("trees")
-        .select(`
-          *,
-          tree_species (
-            name,
-            category
-          )
-        `)
-        .eq("user_id", user?.id)
-        .order("planted_date", { ascending: false });
-
-      if (error) throw error;
-      setTrees(treesData || []);
-    } catch (error: any) {
-      console.error("Error fetching dashboard data:", error);
-      toast.error("Failed to load dashboard data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success("Logged out successfully");
-      navigate("/");
-    } catch (error: any) {
-      toast.error("Failed to logout");
-    }
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    navigate("/");
   };
 
   const handleExport = async (dataType: string) => {
@@ -119,9 +64,9 @@ export default function Dashboard() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       toast.success(`${dataType.charAt(0).toUpperCase() + dataType.slice(1)} exported successfully!`);
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Export failed", {
-        description: error.message || "An unexpected error occurred."
+        description: error instanceof Error ? error.message : "An unexpected error occurred."
       });
     }
   };
@@ -332,7 +277,7 @@ export default function Dashboard() {
               <div>
                 <label className="text-sm font-medium">Email</label>
                 <div className="mt-1 text-muted-foreground">
-                  {profile?.email || user?.email}
+                  {profile?.email}
                 </div>
               </div>
               <div>

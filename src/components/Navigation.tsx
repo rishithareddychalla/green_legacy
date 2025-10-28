@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Leaf, User } from "lucide-react";
 import { Button } from "./ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { isLoggedIn, logout } from "@/lib/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,22 +13,12 @@ import {
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<boolean | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    setUser(isLoggedIn());
   }, []);
 
   const navLinks = [
@@ -88,7 +78,7 @@ export const Navigation = () => {
                       Dashboard
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => supabase.auth.signOut()}>
+                    <DropdownMenuItem onClick={logout}>
                       Logout
                     </DropdownMenuItem>
                   </>
@@ -142,7 +132,7 @@ export const Navigation = () => {
                   </Link>
                   <button
                     onClick={() => {
-                      supabase.auth.signOut();
+                      logout();
                       setIsOpen(false);
                     }}
                     className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-muted transition-all text-left"
