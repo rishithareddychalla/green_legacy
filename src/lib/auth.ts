@@ -12,6 +12,7 @@ export const login = async (email, password) => {
   }
   const data = await res.json();
   localStorage.setItem("token", data.token);
+  localStorage.removeItem("isSoftLoggedOut");
   return data;
 };
 
@@ -27,11 +28,12 @@ export const signup = async (name, email, password) => {
   }
   const data = await res.json();
   localStorage.setItem("token", data.token);
+  localStorage.removeItem("isSoftLoggedOut");
   return data;
 };
 
 export const logout = () => {
-  localStorage.removeItem("token");
+  localStorage.setItem("isSoftLoggedOut", "true");
 };
 
 export const getToken = () => {
@@ -39,5 +41,7 @@ export const getToken = () => {
 };
 
 export const isLoggedIn = () => {
-  return !!localStorage.getItem("token");
+  const token = !!localStorage.getItem("token");
+  const softLoggedOut = localStorage.getItem("isSoftLoggedOut") === "true";
+  return token && !softLoggedOut;
 };

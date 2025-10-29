@@ -19,7 +19,13 @@ export const Navigation = () => {
 
   useEffect(() => {
     setUser(isLoggedIn());
-  }, []);
+  }, [location]);
+
+  const handleLogout = () => {
+    logout();
+    setUser(false);
+    navigate("/");
+  };
 
   const navLinks = [
     { to: "/", label: "Home" },
@@ -78,7 +84,7 @@ export const Navigation = () => {
                       Dashboard
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logout}>
+                     <DropdownMenuItem onClick={handleLogout}>
                       Logout
                     </DropdownMenuItem>
                   </>
@@ -132,7 +138,7 @@ export const Navigation = () => {
                   </Link>
                   <button
                     onClick={() => {
-                      logout();
+                      handleLogout();
                       setIsOpen(false);
                     }}
                     className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-muted transition-all text-left"
