@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import XLSX from 'xlsx';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import sendEmail from './email.js';
 
 dotenv.config();
 
@@ -133,6 +134,27 @@ app.post('/contact', async (req, res) => {
 app.post('/volunteer', async (req, res) => {
   try {
     const doc = await Volunteer.create(req.body);
+
+    // Send volunteer email
+    const { name, email } = req.body;
+    const subject = 'Welcome to Green Legacy 🌱';
+    const html = `
+      Hi ${name},
+      <br><br>
+      🌱 Thank you for signing up as a volunteer with Green Legacy!
+      <br><br>
+      Your details have been successfully recorded and forwarded to our team. We truly appreciate your willingness to contribute your time and energy towards building a greener future.
+      <br><br>
+      Our team will review your response and reach out to you shortly with the next steps, updates, and opportunities to get involved. Please keep an eye on your inbox for further communication.
+      <br><br>
+      Together, we can make a lasting impact. 💚
+      <br><br>
+      Warm regards,
+      <br>
+      The Green Legacy Team
+    `;
+    await sendEmail(email, subject, html);
+
     res.status(201).json(doc);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -142,6 +164,26 @@ app.post('/volunteer', async (req, res) => {
 app.post('/csr', async (req, res) => {
   try {
     const doc = await CSR.create(req.body);
+
+    // Send CSR email
+    const { company, contactPerson, email } = req.body;
+    const name = contactPerson || company;
+    const subject = 'Welcome to Green Legacy 🌱';
+    const html = `
+      Hi ${name},
+      <br><br>
+      🌱 Thank you for registering your organization with Green Legacy under our CSR initiative.
+      <br><br>
+      Your details have been successfully recorded and forwarded to our team. We deeply value your commitment to sustainability and social responsibility. Our team will review your response and reach out shortly with partnership opportunities, project updates, and ways your contribution will make an impact.
+      <br><br>
+      We look forward to working together to create a lasting positive change.
+      <br><br>
+      Warm regards,
+      <br>
+      The Green Legacy Team
+    `;
+    await sendEmail(email, subject, html);
+
     res.status(201).json(doc);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -183,6 +225,26 @@ app.post('/signup', async (req, res) => {
       password: hashedPassword,
     });
     await user.save();
+
+    // Send welcome email
+    const subject = 'Welcome to Green Legacy 🌱';
+    const html = `
+      Hi ${name},
+      <br><br>
+      Thank you for signing up with Green Legacy! We are very glad to have you join our community.
+      <br><br>
+      Your signup has been successfully recorded, and our team has been notified of your interest. We truly appreciate your willingness to be part of our mission to create a greener and more sustainable future.
+      <br><br>
+      Our team will be reaching out to you soon with updates, opportunities, and ways you can get involved. Please keep an eye on your inbox for further communication.
+      <br><br>
+      Together, we can make a lasting impact. 💚
+      <br><br>
+      Warm regards,
+      <br>
+      The Green Legacy Team
+    `;
+    await sendEmail(email, subject, html);
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
