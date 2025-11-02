@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Leaf, Droplet, Wind, Download, MapPin, LogOut, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { fetchWithAuth } from "../lib/fetchWithAuth";
+import Certificate from "@/components/Certificate";
 
 interface TreeData {
   id: string;
@@ -245,17 +246,7 @@ export default function Dashboard() {
 
         {/* Certificates Tab */}
         <TabsContent value="certificates" className="space-y-4">
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Download className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground mb-4">
-                Certificate generation coming soon!
-              </p>
-              <p className="text-sm text-muted-foreground">
-                You'll be able to download and share your tree planting certificates
-              </p>
-            </CardContent>
-          </Card>
+          <Certificate donorName={profile?.full_name || "Esteemed Donor"} />
         </TabsContent>
 
         {/* Profile Tab */}

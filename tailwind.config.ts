@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         'heading': ['Montserrat', 'sans-serif'],
         'body': ['Open Sans', 'sans-serif'],
+        'certificate': ['"Dancing Script"', 'cursive'],
       },
       colors: {
         'primary-light': 'hsl(var(--primary-light))',
@@ -131,5 +132,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [import("tailwindcss-animate")],
 } satisfies Config;
