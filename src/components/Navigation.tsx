@@ -40,6 +40,7 @@ export const Navigation = () => {
 
   const isActive = (path: string) => location.pathname === path;
   const isDashboard = location.pathname === '/dashboard';
+  const isDonatePage = location.pathname === '/donate';
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
@@ -59,8 +60,8 @@ export const Navigation = () => {
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
               let to = link.to;
-              if (link.label === "Donate" && !user) {
-                to = "/auth";
+              if (link.label === "Donate") {
+                to = user ? "/dashboard" : "/auth";
               }
               return (
                 <Link
@@ -69,7 +70,12 @@ export const Navigation = () => {
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     isActive(to)
                       ? "bg-primary text-primary-foreground"
-                      : `text-foreground ${isDashboard ? '' : 'hover:bg-muted'}`
+                      : `text-foreground ${
+                          isDashboard ||
+                          (user && link.label === "Donate" && !isDonatePage)
+                            ? ""
+                            : "hover:bg-muted"
+                        }`
                   }`}
                 >
                   {link.label}
@@ -121,8 +127,8 @@ export const Navigation = () => {
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => {
                 let to = link.to;
-                if (link.label === "Donate" && !user) {
-                  to = "/auth";
+                if (link.label === "Donate") {
+                  to = user ? "/dashboard" : "/auth";
                 }
                 return (
                   <Link
@@ -132,7 +138,12 @@ export const Navigation = () => {
                     className={`px-4 py-3 rounded-lg font-medium transition-all ${
                       isActive(to)
                         ? "bg-primary text-primary-foreground"
-                        : `text-foreground ${isDashboard ? '' : 'hover:bg-muted'}`
+                        : `text-foreground ${
+                            isDashboard ||
+                            (user && link.label === "Donate" && !isDonatePage)
+                              ? ""
+                              : "hover:bg-muted"
+                          }`
                     }`}
                   >
                     {link.label}
