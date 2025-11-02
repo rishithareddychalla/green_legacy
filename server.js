@@ -96,6 +96,19 @@ const DonationSchema = new mongoose.Schema(
 );
 const Donation = mongoose.model('Donation', DonationSchema);
 
+const TreeSchema = new mongoose.Schema(
+  {
+    donor_name: { type: String, required: true },
+    species_name: { type: String, required: true },
+    tree_id: { type: String, required: true, unique: true },
+    location: { type: String, required: false },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Signup', required: false },
+    payment_id: { type: String, required: false },
+  },
+  options
+);
+const Tree = mongoose.model('Tree', TreeSchema);
+
 // Helpers
 function sendAsExcel(res, data, filename) {
   const wb = XLSX.utils.book_new();
@@ -257,8 +270,22 @@ app.post('/signup', async (req, res) => {
 
 app.post('/donation', async (req, res) => {
   try {
-    const doc = await Donation.create(req.body);
+    const { name, email, amount, paymentId, donationData } = req.body;
+    const doc = await Donation.create({ name, email, amount, paymentId });
+    const { donor_name, species_name, tree_id, location, user_id } = donationData;
 
+    if (!paymentId) {
+      return res.status(400).json({ error: 'Payment ID is required' });
+    }
+
+    await Tree.create({
+      donor_name,
+      species_name,
+      tree_id,
+      location,
+      user_id,
+      payment_id: paymentId,
+    });
     try {
       const { name, email, amount } = req.body;
       await axios.post('https://urtgpcvolblctqdugbtl.supabase.co/functions/v1/send-certificate', {
@@ -280,6 +307,15 @@ app.post('/donation', async (req, res) => {
 });
 
 // Routes - GET export
+app.get('/my-trees', auth, async (req, res) => {
+  try {
+    const trees = await Tree.find({ user_id: req.user.id });
+    res.json(trees);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/export-contacts', auth, async (_req, res) => {
   try {
     const rows = await Contact.find().lean();
