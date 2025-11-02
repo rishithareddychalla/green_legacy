@@ -21,6 +21,10 @@ const Payment = () => {
 
   const UPI_ID = "8074935169@ybl";
 
+  const isLoggedIn = () => {
+    return localStorage.getItem('token') !== null;
+  };
+
   useEffect(() => {
     if (!donationData) {
       toast.error("Invalid payment session");
@@ -65,6 +69,7 @@ const Payment = () => {
           email: donationData.email,
           amount: donationData.amount,
           paymentId: finalPaymentId,
+          donationData: donationData,
         }),
       });
       if (!res.ok) {

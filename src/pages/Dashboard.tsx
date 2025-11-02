@@ -6,22 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Leaf, Droplet, Wind, Download, MapPin, LogOut, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
-import { fetchWithAuth } from "../lib/fetchWithAuth";
 import Certificate from "@/components/Certificate";
 
 interface TreeData {
-  id: string;
+  _id: string;
+  donor_name: string;
+  species_name: string;
   tree_id: string;
-  amount: number;
-  planted_date: string;
-  occasion: string;
-  location: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  tree_species: {
-    name: string;
-    category: string;
-  } | null;
+  location: string;
+  payment_id: string;
 }
 
 interface Profile {
@@ -36,10 +29,27 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Mocking the data since there is no endpoint to fetch dashboard data
-    setProfile({ full_name: "Donor", email: "donor@example.com" });
-    setTrees([]);
-    setLoading(false);
+    const fetchTrees = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/my-trees', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        if (!res.ok) {
+          throw new Error('Failed to fetch trees');
+        }
+        const data = await res.json();
+        setTrees(data);
+      } catch (error) {
+        toast.error('Failed to fetch trees');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrees();
   }, []);
 
   const handleLogout = () => {
@@ -48,34 +58,7 @@ export default function Dashboard() {
     navigate("/");
   };
 
-  const handleExport = async (dataType: string) => {
-    try {
-      const res = await fetchWithAuth(`http://localhost:5000/export-${dataType}`);
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: 'Failed to export data' }));
-        throw new Error(err.error);
-      }
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${dataType}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      toast.success(`${dataType.charAt(0).toUpperCase() + dataType.slice(1)} exported successfully!`);
-    } catch (error) {
-      toast.error("Export failed", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred."
-      });
-    }
-  };
-
   const totalTrees = trees.length;
-  const totalAmount = trees.reduce((sum, tree) => sum + tree.amount, 0);
-  
-  // Impact calculations (example values per tree)
   const co2Absorbed = totalTrees * 22; // kg per year
   const oxygenReleased = totalTrees * 118; // kg per year
   const waterSaved = totalTrees * 140; // liters per year
@@ -189,17 +172,14 @@ export default function Dashboard() {
             </Card>
           ) : (
             trees.map((tree) => (
-              <Card key={tree.id}>
+              <Card key={tree._id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         <Leaf className="h-5 w-5 text-primary" />
-                        {tree.tree_species?.name || "Tree"}
+                        {tree.species_name}
                       </CardTitle>
-                      <CardDescription>
-                        Planted on {new Date(tree.planted_date).toLocaleDateString()}
-                      </CardDescription>
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-muted-foreground">Tree ID</div>
@@ -207,38 +187,6 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                      <div className="text-sm text-muted-foreground">Occasion</div>
-                      <div className="font-medium">{tree.occasion}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Category</div>
-                      <div className="font-medium">{tree.tree_species?.category || "N/A"}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Amount</div>
-                      <div className="font-medium">₹{tree.amount}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Location</div>
-                      <div className="font-medium flex items-center gap-1">
-                        {tree.location || "N/A"}
-                        {tree.latitude && tree.longitude && (
-                          <a
-                            href={`https://maps.google.com/?q=${tree.latitude},${tree.longitude}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary"
-                          >
-                            <MapPin className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
               </Card>
             ))
           )}
@@ -270,46 +218,6 @@ export default function Dashboard() {
                 <div className="mt-1 text-muted-foreground">
                   {profile?.email}
                 </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Total Contribution</label>
-                <div className="mt-1 text-muted-foreground">
-                  ₹{totalAmount}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Admin Tab */}
-        <TabsContent value="admin" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Admin Actions</CardTitle>
-              <CardDescription>Export data from the system.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Button onClick={() => handleExport("contacts")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Export Contacts
-                </Button>
-                <Button onClick={() => handleExport("volunteers")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Export Volunteers
-                </Button>
-                <Button onClick={() => handleExport("csrs")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Export CSRs
-                </Button>
-                <Button onClick={() => handleExport("signups")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Export Signups
-                </Button>
-                <Button onClick={() => handleExport("donations")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Export Donations
-                </Button>
               </div>
             </CardContent>
           </Card>
