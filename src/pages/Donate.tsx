@@ -32,6 +32,24 @@ const categoryConfig = {
   indoor: { label: "Indoor/Decorative", icon: TreePine, color: "text-blue-500" },
 };
 
+const mockTreeSpecies: TreeSpecies[] = [
+  { id: '1', name: 'Mango Tree', category: 'fruit', price: 1500, description: 'A sweet and juicy fruit-bearing tree.' },
+  { id: '2', name: 'Neem Tree', category: 'indoor', price: 1200, description: 'Known for its medicinal properties.' },
+  { id: '3', name: 'Rose Plant', category: 'herb', price: 800, description: 'A beautiful flowering plant.' },
+  { id: '4', name: 'Tulsi Plant', category: 'herb', price: 500, description: 'A sacred and medicinal herb.' },
+  { id: '5', name: 'Banyan Tree', category: 'indoor', price: 2500, description: 'A large, long-living shade tree.' },
+  { id: '6', name: 'Peepal Tree', category: 'indoor', price: 2200, description: 'A sacred tree in many cultures.' },
+  { id: '7', name: 'Guava Tree', category: 'fruit', price: 1300, description: 'A delicious and nutritious fruit tree.' },
+  { id: '8', name: 'Marigold Plant', category: 'herb', price: 600, description: 'A bright and cheerful flowering plant.' },
+  { id: '9', name: 'Ashoka Tree', category: 'indoor', price: 1800, description: 'An ornamental tree with beautiful flowers.' },
+  { id: '10', name: 'Bamboo Plant', category: 'indoor', price: 1000, description: 'A fast-growing and versatile grass.' },
+  { id: '11', name: 'Coconut Tree', category: 'fruit', price: 2000, description: 'A tropical tree with many uses.' },
+  { id: '12', name: 'Jasmine Plant', category: 'herb', price: 700, description: 'A fragrant flowering plant.' },
+  { id: '13', name: 'Lemon Tree', category: 'fruit', price: 1400, description: 'A citrus tree with sour fruits.' },
+  { id: '14', name: 'Hibiscus Plant', category: 'herb', price: 750, description: 'A plant with large, colorful flowers.' },
+  { id: '15', name: 'Aloe Vera Plant', category: 'vegetable', price: 400, description: 'A succulent plant with medicinal uses.' },
+];
+
 const Donate = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -58,8 +76,8 @@ const Donate = () => {
 
   const fetchTreeSpecies = async () => {
     // Mocking the data since there is no endpoint to fetch tree species
-    setTreeSpecies([]);
-    setFilteredTrees([]);
+    setTreeSpecies(mockTreeSpecies);
+    setFilteredTrees(mockTreeSpecies);
     setLoading(false);
   };
 
