@@ -171,10 +171,16 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           ) : (
-            trees.map((tree) => (
-              <Card key={tree._id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
+            <>
+              <div className="flex justify-end">
+                <Button onClick={() => navigate("/donate")}>
+                  Make new plantation
+                </Button>
+              </div>
+              {trees.map((tree) => (
+                <Card key={tree._id}>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         <Leaf className="h-5 w-5 text-primary" />
@@ -188,7 +194,8 @@ export default function Dashboard() {
                   </div>
                 </CardHeader>
               </Card>
-            ))
+              ))}
+            </>
           )}
         </TabsContent>
 
