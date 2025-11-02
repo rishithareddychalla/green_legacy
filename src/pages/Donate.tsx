@@ -47,7 +47,7 @@ const mockTreeSpecies: TreeSpecies[] = [
   { id: '12', name: 'Jasmine Plant', category: 'herb', price: 700, description: 'A fragrant flowering plant.' },
   { id: '13', name: 'Lemon Tree', category: 'fruit', price: 1400, description: 'A citrus tree with sour fruits.' },
   { id: '14', name: 'Hibiscus Plant', category: 'herb', price: 750, description: 'A plant with large, colorful flowers.' },
-  { id: '15', name: 'Aloe Vera Plant', category: 'vegetable', price: 400, description: 'A succulent plant with medicinal uses.' },
+  { id: '15', name: 'Aloe Vera Plant', category: 'vegetable', price: 1, description: 'A succulent plant with medicinal uses.' },
 ];
 
 const Donate = () => {
