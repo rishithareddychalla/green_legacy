@@ -7,6 +7,7 @@ import XLSX from 'xlsx';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import sendEmail from './email.js';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -257,6 +258,21 @@ app.post('/signup', async (req, res) => {
 app.post('/donation', async (req, res) => {
   try {
     const doc = await Donation.create(req.body);
+
+    try {
+      const { name, email, amount } = req.body;
+      await axios.post('https://urtgpcvolblctqdugbtl.supabase.co/functions/v1/send-certificate', {
+        donorName: name,
+        email,
+        treeSpecies: 'Mixed Species',
+        treeId: `TREE-${Date.now()}`,
+        plantingDate: new Date().toLocaleDateString(),
+        amount,
+      });
+    } catch (emailError) {
+      console.error('Failed to send certificate email:', emailError.message);
+    }
+
     res.status(201).json(doc);
   } catch (err) {
     res.status(400).json({ error: err.message });
