@@ -56,19 +56,27 @@ export const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  isActive(link.to)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const to =
+                link.label === "Donate"
+                  ? user
+                    ? "/dashboard"
+                    : "/auth"
+                  : link.to;
+              return (
+                <Link
+                  key={link.label}
+                  to={to}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    isActive(to)
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             
             {/* Dashboard Dropdown */}
             <DropdownMenu>
@@ -112,20 +120,28 @@ export const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden py-4 animate-fade-in">
             <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setIsOpen(false)}
-                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
-                    isActive(link.to)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const to =
+                  link.label === "Donate"
+                    ? user
+                      ? "/dashboard"
+                      : "/auth"
+                    : link.to;
+                return (
+                  <Link
+                    key={link.label}
+                    to={to}
+                    onClick={() => setIsOpen(false)}
+                    className={`px-4 py-3 rounded-lg font-medium transition-all ${
+                      isActive(to)
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <div className="border-t border-border my-2"></div>
               {user ? (
                 <>
