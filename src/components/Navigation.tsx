@@ -39,6 +39,7 @@ export const Navigation = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+  const isDashboard = location.pathname === '/dashboard';
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
@@ -57,12 +58,10 @@ export const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
-              const to =
-                link.label === "Donate"
-                  ? user
-                    ? "/dashboard"
-                    : "/auth"
-                  : link.to;
+              let to = link.to;
+              if (link.label === "Donate" && !user) {
+                to = "/auth";
+              }
               return (
                 <Link
                   key={link.label}
@@ -70,7 +69,7 @@ export const Navigation = () => {
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     isActive(to)
                       ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-muted"
+                      : `text-foreground ${isDashboard ? '' : 'hover:bg-muted'}`
                   }`}
                 >
                   {link.label}
@@ -121,12 +120,10 @@ export const Navigation = () => {
           <div className="lg:hidden py-4 animate-fade-in">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => {
-                const to =
-                  link.label === "Donate"
-                    ? user
-                      ? "/dashboard"
-                      : "/auth"
-                    : link.to;
+                let to = link.to;
+                if (link.label === "Donate" && !user) {
+                  to = "/auth";
+                }
                 return (
                   <Link
                     key={link.label}
@@ -135,7 +132,7 @@ export const Navigation = () => {
                     className={`px-4 py-3 rounded-lg font-medium transition-all ${
                       isActive(to)
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
+                        : `text-foreground ${isDashboard ? '' : 'hover:bg-muted'}`
                     }`}
                   >
                     {link.label}
@@ -148,7 +145,7 @@ export const Navigation = () => {
                   <Link
                     to="/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-muted transition-all"
+                    className={`px-4 py-3 rounded-lg font-medium text-foreground transition-all ${isDashboard ? '' : 'hover:bg-muted'}`}
                   >
                     Dashboard
                   </Link>
@@ -157,7 +154,7 @@ export const Navigation = () => {
                       handleLogout();
                       setIsOpen(false);
                     }}
-                    className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-muted transition-all text-left"
+                    className={`px-4 py-3 rounded-lg font-medium text-foreground transition-all text-left ${isDashboard ? '' : 'hover:bg-muted'}`}
                   >
                     Logout
                   </button>
@@ -166,7 +163,7 @@ export const Navigation = () => {
                 <Link
                   to="/auth"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-muted transition-all"
+                  className={`px-4 py-3 rounded-lg font-medium text-foreground transition-all ${isDashboard ? '' : 'hover:bg-muted'}`}
                 >
                   Login / Sign Up
                 </Link>
