@@ -311,6 +311,8 @@ app.get('/api/admin/contacts', adminAuth, adminController.getContacts);
 app.get('/api/admin/csr', adminAuth, adminController.getCSRInquiries);
 app.get('/api/admin/trees', adminAuth, adminController.getTrees);
 app.get('/api/admin/volunteers', adminAuth, adminController.getVolunteers);
+app.get('/api/admin/logins', adminAuth, adminController.getLogins);
+app.get('/api/admin/signups', adminAuth, adminController.getSignups);
 
 app.get('/', (_req, res) => {
   res.send({ status: 'OK', service: 'Green Legacy Backend', time: new Date() });
