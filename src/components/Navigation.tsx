@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Leaf, User } from "lucide-react";
 import { Button } from "./ui/button";
+import { CartButton } from "./CartButton";
 import { isLoggedIn, logout } from "@/lib/auth";
 import {
   DropdownMenu,
@@ -83,6 +84,9 @@ export const Navigation = () => {
               );
             })}
             
+            {/* Cart Button */}
+            <CartButton onClick={() => navigate("/choose-tree")} />
+
             {/* Dashboard Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -91,21 +95,24 @@ export const Navigation = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                {user ? (
-                  <>
-                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                      Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={handleLogout}>
-                      Logout
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <DropdownMenuItem onClick={() => navigate("/auth")}>
-                    Login / Sign Up
+              {user ? (
+                <>
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                    Dashboard
                   </DropdownMenuItem>
-                )}
+                  <DropdownMenuItem onClick={() => navigate("/rewards")}>
+                    Rewards
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem onClick={() => navigate("/auth")}>
+                  Login / Sign Up
+                </DropdownMenuItem>
+              )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -159,6 +166,13 @@ export const Navigation = () => {
                     className={`px-4 py-3 rounded-lg font-medium text-foreground transition-all ${isDashboard ? '' : 'hover:bg-muted'}`}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    to="/rewards"
+                    onClick={() => setIsOpen(false)}
+                    className="px-4 py-3 rounded-lg font-medium text-foreground transition-all hover:bg-muted"
+                  >
+                    Rewards
                   </Link>
                   <button
                     onClick={() => {

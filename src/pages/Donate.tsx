@@ -5,8 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Gift, Heart, Cake, Users, TreePine, Sparkles, Leaf, Apple, Flower } from "lucide-react";
+import { Gift, Heart, Cake, Users, TreePine, Sparkles, Leaf, Apple, Flower, ShoppingBag } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { Cart } from "@/components/Cart";
 
 interface TreeSpecies {
   id: string;
@@ -50,21 +53,39 @@ const mockTreeSpecies: TreeSpecies[] = [
   { id: '15', name: 'Aloe Vera Plant', category: 'vegetable', price: 1, description: 'A succulent plant with medicinal uses.' },
 ];
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  dedicationType: string;
+  dedicatee: string;
+  message: string;
+  name: string;
+  occasion: string;
+  customAmount: string;
+}
+
 const Donate = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
+  const { state: cart, updateQuantity, addItem } = useCart();
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
     email: "",
-    occasion: "",
-    treeCount: "1",
+    phone: "",
+    dedicationType: "self",
+    dedicatee: "",
     message: "",
-    selectedTree: "",
+    name: "",
+    occasion: "",
     customAmount: "",
   });
   const [treeSpecies, setTreeSpecies] = useState<TreeSpecies[]>([]);
   const [filteredTrees, setFilteredTrees] = useState<TreeSpecies[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     fetchTreeSpecies();
@@ -100,50 +121,68 @@ const Donate = () => {
     setFilteredTrees(filtered);
   };
 
-  const handleTreeSelection = (treeId: string) => {
-    const selectedTree = treeSpecies.find(t => t.id === treeId);
-    if (selectedTree) {
-      setFormData({
-        ...formData,
-        selectedTree: treeId,
-        customAmount: selectedTree.price.toString(),
-        treeCount: "1",
+  const handleAddToCart = (tree: TreeSpecies) => {
+    try {
+      addItem({
+        id: tree.id,
+        name: tree.name,
+        price: tree.price,
+        description: tree.description || "",
+        image_url: null
       });
+      toast.success(`${tree.name} added to cart`, {
+        description: "You can add more trees or proceed to checkout",
+        action: {
+          label: "View Cart",
+          onClick: () => setIsCartOpen(true)
+        }
+      });
+    } catch (error) {
+      toast.error('Failed to add item to cart');
+      console.error('Failed to add to cart:', error);
     }
+  };
+
+  const calculateTotal = () => {
+    return cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const handleInputChange = (e: { target: { name: string; value: string } }) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleCustomAmountChange = (amount: string) => {
     setFormData({
       ...formData,
       customAmount: amount,
-      selectedTree: "",
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleDonationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.selectedTree) {
-      toast.error('Please select a tree to plant');
-      return;
-    }
-
-    const selectedTree = treeSpecies.find(t => t.id === formData.selectedTree);
-    if (!selectedTree) {
-      toast.error('Invalid tree selection');
+    if (cart.items.length === 0) {
+      toast.error('Please add at least one tree to your cart');
       return;
     }
 
     const donationData = {
-      donor_name: formData.name,
+      donor_name: `${formData.firstName} ${formData.lastName}`,
       email: formData.email,
-      phone: "",
+      phone: formData.phone,
       occasion: formData.occasion,
-      amount: selectedTree.price,
-      species_id: selectedTree.id,
-      species_name: selectedTree.name,
-      tree_id: `TREE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase(),
-      location: formData.message,
+      dedication_type: formData.dedicationType,
+      dedicatee: formData.dedicatee,
+      amount: calculateTotal(),
+      trees: cart.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        tree_id: `TREE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase(),
+      })),
+      message: formData.message,
     };
 
     console.log("Donation data:", donationData);
@@ -151,18 +190,19 @@ const Donate = () => {
   };
 
   return (
-    <div className="min-h-screen py-20">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 animate-fade-up">
-            <h1 className="font-heading font-bold text-4xl md:text-5xl mb-4">
-              Celebrate with a Tree
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Make your special occasion even more meaningful by planting trees. 
-              Each tree comes with a personalized certificate and geo-tagged location.
-            </p>
-          </div>
+    <>
+      <div className="min-h-screen py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12 animate-fade-up">
+              <h1 className="font-heading font-bold text-4xl md:text-5xl mb-4">
+                Celebrate with a Tree
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Make your special occasion even more meaningful by planting trees. 
+                Each tree comes with a personalized certificate and geo-tagged location.
+              </p>
+            </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Occasion Selection */}
@@ -191,12 +231,28 @@ const Donate = () => {
               </div>
             </Card>
 
-            {/* Pricing */}
+            {/* Cart Summary */}
             <Card className="p-4 sm:p-8 bg-gradient-to-br from-primary/5 to-primary-light/5 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-              <h2 className="font-heading font-semibold text-xl sm:text-2xl mb-4 sm:mb-6">Your Contribution</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading font-semibold text-xl sm:text-2xl">Your Cart</h2>
+                <Button 
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  onClick={() => setIsCartOpen(true)}
+                >
+                  <ShoppingBag className="h-5 w-5" />
+                  View Cart
+                  {cart.items.length > 0 && (
+                    <span className="ml-2 bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-sm">
+                      {cart.items.reduce((sum, item) => sum + item.quantity, 0)}
+                    </span>
+                  )}
+                </Button>
+              </div>
+
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="customAmount">Enter Amount (Optional)</Label>
+                  <Label htmlFor="customAmount">Filter by Budget (Optional)</Label>
                   <Input
                     id="customAmount"
                     type="number"
@@ -209,21 +265,22 @@ const Donate = () => {
                   <p className="text-xs sm:text-sm text-muted-foreground">
                     {formData.customAmount 
                       ? `Showing trees up to ₹${formData.customAmount}`
-                      : "Or select a tree below to auto-fill amount"}
+                      : "Browse all trees below"}
                   </p>
                 </div>
                 
-                {formData.selectedTree && (
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-primary text-white rounded-lg gap-2">
+                {cart.items.length > 0 && (
+                  <div className="flex items-center justify-between p-4 bg-primary text-white rounded-lg">
                     <div>
-                      <span className="font-semibold block sm:inline">Selected Tree:</span>
-                      <span className="font-medium block sm:inline sm:ml-2">
-                        {treeSpecies.find(t => t.id === formData.selectedTree)?.name}
+                      <span className="font-medium">Total Trees:</span>
+                      <span className="font-bold ml-2">{cart.items.reduce((sum, item) => sum + item.quantity, 0)}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Total Amount:</span>
+                      <span className="font-heading font-bold text-xl ml-2">
+                        ₹{calculateTotal()}
                       </span>
                     </div>
-                    <span className="font-heading font-bold text-xl sm:text-2xl">
-                      ₹{treeSpecies.find(t => t.id === formData.selectedTree)?.price.toLocaleString()}
-                    </span>
                   </div>
                 )}
               </div>
@@ -263,20 +320,19 @@ const Donate = () => {
                 {filteredTrees.map((tree) => {
                   const CategoryIcon = categoryConfig[tree.category as keyof typeof categoryConfig]?.icon || TreePine;
                   const categoryColor = categoryConfig[tree.category as keyof typeof categoryConfig]?.color || "text-green-500";
-                  const isSelected = formData.selectedTree === tree.id;
+                  const isInCart = cart.items.some(item => item.id === tree.id);
                   
                   return (
-                    <button
+                    <div
                       key={tree.id}
-                      onClick={() => handleTreeSelection(tree.id)}
-                      className={`p-4 rounded-xl border-2 transition-all text-left hover:shadow-md ${
-                        isSelected
+                      className={`p-4 rounded-xl border-2 transition-all hover:shadow-md ${
+                        isInCart
                           ? "border-primary bg-primary/5 shadow-md"
                           : "border-border hover:border-primary/50"
                       }`}
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <CategoryIcon className={`h-6 w-6 ${isSelected ? "text-primary" : categoryColor}`} />
+                        <CategoryIcon className={`h-6 w-6 ${isInCart ? "text-primary" : categoryColor}`} />
                         <span className="font-heading font-bold text-lg text-primary">
                           ₹{tree.price}
                         </span>
@@ -285,10 +341,21 @@ const Donate = () => {
                       <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                         {tree.description}
                       </p>
-                      <span className="text-xs text-muted-foreground capitalize mt-2 block">
-                        {categoryConfig[tree.category as keyof typeof categoryConfig]?.label || tree.category}
-                      </span>
-                    </button>
+                      <div className="flex items-center justify-between mt-4">
+                        <span className="text-xs text-muted-foreground capitalize">
+                          {categoryConfig[tree.category as keyof typeof categoryConfig]?.label || tree.category}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant={isInCart ? "secondary" : "default"}
+                          onClick={() => handleAddToCart(tree)}
+                          className="ml-2"
+                        >
+                          <ShoppingBag className="h-4 w-4 mr-2" />
+                          {isInCart ? "Add Again" : "Add to Cart"}
+                        </Button>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
@@ -297,7 +364,7 @@ const Donate = () => {
 
           {/* Donation Form */}
           <Card className="p-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleDonationSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Your Name *</Label>
@@ -358,7 +425,7 @@ const Donate = () => {
                 type="submit" 
                 size="lg" 
                 className="w-full font-heading font-semibold text-base sm:text-lg"
-                disabled={!formData.occasion || !formData.name || !formData.email || !formData.selectedTree}
+                disabled={!formData.occasion || !formData.firstName || !formData.lastName || !formData.email || !formData.phone || cart.items.length === 0}
               >
                 Proceed to Payment
               </Button>
@@ -366,8 +433,11 @@ const Donate = () => {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+      {/* Cart Dialog */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   );
-};
+}
 
 export default Donate;

@@ -30,84 +30,14 @@ mongoose
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Error connecting to MongoDB:', err.message));
 
-// Schemas & Models
-const options = { timestamps: { createdAt: 'date', updatedAt: false } };
-
-const ContactSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    message: { type: String, required: true },
-  },
-  options
-);
-const Contact = mongoose.model('Contact', ContactSchema);
-
-const VolunteerSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    interest: { type: String, required: false },
-  },
-  options
-);
-const Volunteer = mongoose.model('Volunteer', VolunteerSchema);
-
-const CSRSpecSchema = new mongoose.Schema(
-  {
-    company: { type: String, required: true },
-    contactPerson: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    proposal: { type: String, required: false },
-  },
-  options
-);
-const CSR = mongoose.model('CSR', CSRSpecSchema);
-
-const LoginSchema = new mongoose.Schema(
-  {
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-  },
-  options
-);
-const Login = mongoose.model('Login', LoginSchema);
-
-const SignupSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-  },
-  options
-);
-const Signup = mongoose.model('Signup', SignupSchema);
-
-const DonationSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    amount: { type: Number, required: true },
-    paymentId: { type: String, required: true },
-  },
-  options
-);
-const Donation = mongoose.model('Donation', DonationSchema);
-
-const TreeSchema = new mongoose.Schema(
-  {
-    donor_name: { type: String, required: true },
-    species_name: { type: String, required: true },
-    tree_id: { type: String, required: true, unique: true },
-    location: { type: String, required: false },
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Signup', required: false },
-    payment_id: { type: String, required: false },
-  },
-  options
-);
-const Tree = mongoose.model('Tree', TreeSchema);
+// Import Models
+import { Contact } from './models/Contact.js';
+import { Volunteer } from './models/Volunteer.js';
+import { CSR } from './models/CSR.js';
+import { Login } from './models/Login.js';
+import { Signup } from './models/Signup.js';
+import { Donation } from './models/Donation.js';
+import { Tree } from './models/Tree.js';
 
 // Helpers
 function sendAsExcel(res, data, filename) {
@@ -369,6 +299,18 @@ app.get('/export-donations', auth, async (_req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Admin Routes
+import { adminAuth } from './middleware/adminAuth.js';
+import { adminController } from './controllers/adminController.js';
+
+app.get('/api/admin/stats', adminAuth, adminController.getStats);
+app.get('/api/admin/users', adminAuth, adminController.getUsers);
+app.get('/api/admin/donations', adminAuth, adminController.getDonations);
+app.get('/api/admin/contacts', adminAuth, adminController.getContacts);
+app.get('/api/admin/csr', adminAuth, adminController.getCSRInquiries);
+app.get('/api/admin/trees', adminAuth, adminController.getTrees);
+app.get('/api/admin/volunteers', adminAuth, adminController.getVolunteers);
 
 app.get('/', (_req, res) => {
   res.send({ status: 'OK', service: 'Green Legacy Backend', time: new Date() });

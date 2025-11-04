@@ -155,7 +155,6 @@ export default function Dashboard() {
           <TabsTrigger value="trees">My Trees</TabsTrigger>
           <TabsTrigger value="certificates">Certificates</TabsTrigger>
           <TabsTrigger value="profile">Profile Settings</TabsTrigger>
-          <TabsTrigger value="admin">Admin</TabsTrigger>
         </TabsList>
 
         {/* Trees Tab */}
