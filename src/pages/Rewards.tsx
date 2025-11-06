@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Wallet, Gift, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -12,6 +12,15 @@ export default function Rewards() {
   const { balance, transactions, isLoading, redeemPoints, config } = useRewards();
   const [pointsToRedeem, setPointsToRedeem] = useState("");
   const [redeeming, setRedeeming] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   const handleRedeem = async () => {
     const points = parseInt(pointsToRedeem);
@@ -35,20 +44,12 @@ export default function Rewards() {
     <div className="container mx-auto py-8 px-4">
       <AnimatePresence>
         {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex items-center justify-center h-96"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="rounded-full h-12 w-12 border-b-4 border-green-500"
-              style={{ borderTop: "4px solid #a7f3d0" }}
-            />
-          </motion.div>
+          <div className="fixed inset-0 flex items-center justify-center bg-white">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <p className="mt-4 text-lg text-primary">Loading rewards...</p>
+            </div>
+          </div>
         ) : (
           <motion.div
             key="rewards"

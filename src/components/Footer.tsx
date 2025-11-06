@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Leaf, Facebook, Instagram, Twitter, Linkedin, Mail } from "lucide-react";
+import { Leaf, Facebook, Instagram, Twitter, Linkedin, Mail, MessageCircle } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -65,6 +65,17 @@ export const Footer = () => {
                 <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <a href="mailto:greenlegacy.org@gmail.com" className="hover:text-white transition-colors">
                   greenlegacy.org@gmail.com
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <MessageCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <a 
+                  href="https://wa.me/918074935169" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Chat on WhatsApp
                 </a>
               </li>
               <li>

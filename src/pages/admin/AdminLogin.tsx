@@ -10,8 +10,9 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext';
 export function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAdminAuth();
+  const { login, verifyOtp, isLoading, pendingVerification } = useAdminAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +25,17 @@ export function AdminLogin() {
     }
   };
 
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    
+    try {
+      await verifyOtp(otp);
+    } catch (err) {
+      setError((err as Error).message || 'Invalid OTP');
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <motion.div
@@ -33,42 +45,78 @@ export function AdminLogin() {
       >
         <Card className="p-8 w-[400px]">
           <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
-          <form onSubmit={handleLogin}>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+          {!pendingVerification ? (
+            <form onSubmit={handleLogin}>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-1">
+                    Email
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium mb-1">
+                    Password
+                  </label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Sending OTP..." : "Login"}
+                </Button>
               </div>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-1">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+            </form>
+          ) : (
+            <form onSubmit={handleOtpSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="otp" className="block text-sm font-medium mb-1">
+                    Enter OTP
+                  </label>
+                  <Input
+                    id="otp"
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                    maxLength={6}
+                    pattern="[0-9]{6}"
+                    placeholder="Enter 6-digit code"
+                    disabled={isLoading}
+                  />
+                  <p className="mt-2 text-sm text-gray-500">
+                    Check your email for the verification code
+                  </p>
+                </div>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Verifying..." : "Verify OTP"}
+                </Button>
               </div>
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </div>
-          </form>
+            </form>
+          )}
         </Card>
       </motion.div>
     </div>

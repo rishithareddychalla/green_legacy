@@ -34,7 +34,12 @@ export const Cart = ({ isOpen, onClose }: CartProps) => {
 
   const handleCheckout = () => {
     onClose();
-    navigate("/donate", { state: { amount: state.totalAmount } });
+    navigate("/payment", { 
+      state: { 
+        amount: state.totalAmount,
+        items: state.items 
+      } 
+    });
   };
 
   return (

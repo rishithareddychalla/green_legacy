@@ -3,7 +3,58 @@ import { ArrowRight, TreePine, Droplets, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatsCounter } from "@/components/home/StatsCounter";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { DonorLeaderboard } from "@/components/home/DonorLeaderboard";
 import heroPlantation from "@/assets/hero-plantation.jpg";
+import type { DonorWithBadge } from "@/types/donor";
+
+// Mock data - Replace with actual data from your API
+const mockDonors: DonorWithBadge[] = [
+  {
+    id: "1",
+    name: "Aarav Kumar",
+    greenPoints: 12500,
+    treesPlanted: 250,
+    donationAmount: 125000,
+    badge: "earth-guardian",
+    rank: 1
+  },
+  {
+    id: "2",
+    name: "Priya Sharma",
+    greenPoints: 8750,
+    treesPlanted: 175,
+    donationAmount: 87500,
+    badge: "gold",
+    rank: 2
+  },
+  {
+    id: "3",
+    name: "Rajesh Patel",
+    greenPoints: 6000,
+    treesPlanted: 120,
+    donationAmount: 60000,
+    badge: "gold",
+    rank: 3
+  },
+  {
+    id: "4",
+    name: "Meera Singh",
+    greenPoints: 3000,
+    treesPlanted: 60,
+    donationAmount: 30000,
+    badge: "silver",
+    rank: 4
+  },
+  {
+    id: "5",
+    name: "Arjun Reddy",
+    greenPoints: 750,
+    treesPlanted: 15,
+    donationAmount: 7500,
+    badge: "bronze",
+    rank: 5
+  }
+];
 
 const Index = () => {
   return (
@@ -55,6 +106,9 @@ const Index = () => {
           <StatsCounter />
         </div>
       </section>
+
+  {/* Donor Leaderboard */}
+  <DonorLeaderboard donors={mockDonors} className="bg-gradient-to-br from-primary/5 to-primary-light/5" />
 
       {/* Carousel Section */}
       <section className="py-20">

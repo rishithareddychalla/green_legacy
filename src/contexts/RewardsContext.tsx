@@ -28,13 +28,27 @@ export function RewardsProvider({ children }: { children: React.ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get userId from token or localStorage (adjust as needed)
-    const token = getToken();
-    if (token) {
-      // Example: decode token to get userId, or fetch profile
-      // For now, assume userId is stored in localStorage
-      setUserId(localStorage.getItem('user_id'));
-    }
+    const loadUserData = async () => {
+      const token = getToken();
+      if (token) {
+        try {
+          const response = await fetchWithAuth('/api/user/profile');
+          if (response.ok) {
+            const data = await response.json();
+            setUserId(data.id);
+          } else {
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error('Error loading user profile:', error);
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+    
+    loadUserData();
   }, []);
   useEffect(() => {
     if (userId) {
@@ -46,13 +60,13 @@ export function RewardsProvider({ children }: { children: React.ReactNode }) {
   async function fetchBalance() {
     if (!userId) return;
     try {
-      const res = await fetchWithAuth(`/api/rewards/balance?userId=${userId}`);
-      if (!res.ok) throw new Error('Failed to fetch balance');
-      const data = await res.json();
-      setBalance({
-        greenPoints: data.greenPoints,
-        walletBalance: data.walletBalance,
-      });
+      // TODO: Replace with actual API call once backend is ready
+      // Mock data for development
+      const mockBalance = {
+        greenPoints: 250,
+        walletBalance: 100
+      };
+      setBalance(mockBalance);
     } catch (error) {
       console.error('Error fetching rewards balance:', error);
       toast.error('Failed to fetch rewards balance');
@@ -64,10 +78,27 @@ export function RewardsProvider({ children }: { children: React.ReactNode }) {
   async function fetchTransactions() {
     if (!userId) return;
     try {
-      const res = await fetchWithAuth(`/api/rewards/transactions?userId=${userId}`);
-      if (!res.ok) throw new Error('Failed to fetch transactions');
-      const data = await res.json();
-      setTransactions(data);
+      // TODO: Replace with actual API call once backend is ready
+      // Mock data for development
+      const mockTransactions = [
+        {
+          id: '1',
+          userId: userId,
+          type: 'earned' as const,
+          points: 100,
+          createdAt: new Date().toISOString(),
+          description: 'Planted 10 trees'
+        },
+        {
+          id: '2',
+          userId: userId,
+          type: 'redeemed' as const,
+          points: 50,
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          description: 'Redeemed for wallet balance'
+        }
+      ];
+      setTransactions(mockTransactions);
     } catch (error) {
       console.error('Error fetching rewards transactions:', error);
       toast.error('Failed to fetch rewards history');

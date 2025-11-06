@@ -303,7 +303,13 @@ app.get('/export-donations', auth, async (_req, res) => {
 // Admin Routes
 import { adminAuth } from './middleware/adminAuth.js';
 import { adminController } from './controllers/adminController.js';
+import { adminAuthController } from './controllers/adminAuthController.js';
 
+// Admin Authentication Routes
+app.post('/api/admin/request-otp', adminAuthController.requestOTP);
+app.post('/api/admin/verify-otp', adminAuthController.verifyOTP);
+
+// Protected Admin Routes
 app.get('/api/admin/stats', adminAuth, adminController.getStats);
 app.get('/api/admin/users', adminAuth, adminController.getUsers);
 app.get('/api/admin/donations', adminAuth, adminController.getDonations);

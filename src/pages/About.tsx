@@ -108,15 +108,35 @@ const About = () => {
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="p-4 bg-card rounded-lg">
-                    <h3 className="font-heading font-semibold text-lg mb-1">Pranay</h3>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Pranay Kumar Mamidi</h3>
                     <p className="text-sm text-primary mb-2">Founder & CEO</p>
+                    <p className="text-sm text-muted-foreground">
+                      Visionary leader driving GREEN LEGACY's mission to transform celebrations into environmental action.
+                    </p>
+                  </div>
+              
+                  <div className="p-4 bg-card rounded-lg">
+                    
+                    <h3 className="font-heading font-semibold text-lg mb-1">Sai Kumar Bayineni</h3>
+                    <h3 className="font-heading  text-lg mb-1">Finance Team</h3>
                     <p className="text-sm text-muted-foreground">
                       Visionary leader driving GREEN LEGACY's mission to transform celebrations into environmental action.
                     </p>
                   </div>
                   
                   <div className="p-4 bg-card rounded-lg">
-                    <h3 className="font-heading font-semibold text-lg mb-1">Operations Team</h3>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Harshitha Nunemunthala</h3>
+                   <h3 className="font-heading  text-lg mb-1">Designing Team</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Visionary leader driving GREEN LEGACY's mission to transform celebrations into environmental action.
+                    </p>
+                  </div>
+                  
+                  
+                  
+                  <div className="p-4 bg-card rounded-lg">
+                    <h3 className="font-heading font-semibold text-lg mb-1">Varshitha Bommisetti</h3>
+                    <h3 className="font-heading  text-lg mb-1">Operations Team</h3>
                     <p className="text-sm text-primary mb-2">Field & Logistics</p>
                     <p className="text-sm text-muted-foreground">
                       Managing plantation drives, tree maintenance, and ensuring every tree thrives.
@@ -124,7 +144,8 @@ const About = () => {
                   </div>
                   
                   <div className="p-4 bg-card rounded-lg">
-                    <h3 className="font-heading font-semibold text-lg mb-1">Technology Team</h3>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Rishitha Reddy Challa</h3>
+                    <h3 className="font-heading  text-lg mb-1">Technology Team</h3>
                     <p className="text-sm text-primary mb-2">Platform & Innovation</p>
                     <p className="text-sm text-muted-foreground">
                       Building the tech infrastructure for seamless donations and impact tracking.
@@ -132,7 +153,8 @@ const About = () => {
                   </div>
                   
                   <div className="p-4 bg-card rounded-lg">
-                    <h3 className="font-heading font-semibold text-lg mb-1">Community Team</h3>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Thanu Sree Thorrikonda</h3>
+                    <h3 className="font-heading  text-lg mb-1">Community Team</h3>
                     <p className="text-sm text-primary mb-2">Engagement & Support</p>
                     <p className="text-sm text-muted-foreground">
                       Connecting with donors, organizing events, and growing our green community.

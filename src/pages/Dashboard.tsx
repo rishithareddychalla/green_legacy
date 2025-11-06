@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Leaf, Droplet, Wind, Download, MapPin, LogOut, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import Certificate from "@/components/Certificate";
+import TreeGrowthVisualizer from "@/components/home/TreeGrowthVisualizer";
 
 interface TreeData {
   _id: string;
@@ -159,6 +160,9 @@ export default function Dashboard() {
 
         {/* Trees Tab */}
         <TabsContent value="trees" className="space-y-4">
+          {/* Tree growth visualizer shown in dashboard for the user */}
+          <TreeGrowthVisualizer />
+
           {trees.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">

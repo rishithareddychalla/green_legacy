@@ -19,7 +19,16 @@ export const Navigation = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setUser(isLoggedIn());
+    const checkAuth = () => {
+      setUser(isLoggedIn());
+    };
+    
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+    };
   }, [location]);
 
   const handleLogout = () => {
@@ -84,8 +93,8 @@ export const Navigation = () => {
               );
             })}
             
-            {/* Cart Button */}
-            <CartButton onClick={() => navigate("/choose-tree")} />
+            {/* Cart Button - Only show when logged in */}
+            {user && <CartButton onClick={() => navigate("/choose-tree")} />}
 
             {/* Dashboard Dropdown */}
             <DropdownMenu>
