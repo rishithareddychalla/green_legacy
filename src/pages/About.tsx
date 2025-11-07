@@ -113,6 +113,15 @@ const About = () => {
                     <p className="text-sm text-muted-foreground">
                       Visionary leader driving GREEN LEGACY's mission to transform celebrations into environmental action.
                     </p>
+
+                  </div>
+                   <div className="p-4 bg-card rounded-lg">
+                    <h3 className="font-heading font-semibold text-lg mb-1">Subba Rao Mamidi</h3>
+                    <h3 className="font-heading  text-lg mb-1">Legal Advisor </h3>
+                    <p className="text-sm text-primary mb-2">Advisor</p>
+                    <p className="text-sm text-muted-foreground">
+                      Managing plantation drives, tree maintenance, and ensuring every tree thrives.
+                    </p>
                   </div>
               
                   <div className="p-4 bg-card rounded-lg">
@@ -124,18 +133,18 @@ const About = () => {
                     </p>
                   </div>
                   
-                  <div className="p-4 bg-card rounded-lg">
+                  {/* <div className="p-4 bg-card rounded-lg">
                     <h3 className="font-heading font-semibold text-lg mb-1">Harshitha Nunemunthala</h3>
                    <h3 className="font-heading  text-lg mb-1">Designing Team</h3>
                     <p className="text-sm text-muted-foreground">
                       Visionary leader driving GREEN LEGACY's mission to transform celebrations into environmental action.
                     </p>
-                  </div>
+                  </div> */}
                   
                   
                   
                   <div className="p-4 bg-card rounded-lg">
-                    <h3 className="font-heading font-semibold text-lg mb-1">Varshitha Bommisetti</h3>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Varshitha bommisetti</h3>
                     <h3 className="font-heading  text-lg mb-1">Operations Team</h3>
                     <p className="text-sm text-primary mb-2">Field & Logistics</p>
                     <p className="text-sm text-muted-foreground">
@@ -143,6 +152,8 @@ const About = () => {
                     </p>
                   </div>
                   
+                 
+
                   <div className="p-4 bg-card rounded-lg">
                     <h3 className="font-heading font-semibold text-lg mb-1">Rishitha Reddy Challa</h3>
                     <h3 className="font-heading  text-lg mb-1">Technology Team</h3>
