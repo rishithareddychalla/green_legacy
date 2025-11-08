@@ -1,4 +1,5 @@
-// Middleware
+import jwt from 'jsonwebtoken';
+
 const auth = (req, res, next) => {
   const authHeader = req.header('Authorization');
   if (!authHeader) {
@@ -14,3 +15,5 @@ const auth = (req, res, next) => {
     res.status(401).json({ error: 'Token is not valid' });
   }
 };
+
+export default auth;
