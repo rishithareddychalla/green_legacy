@@ -1,14 +1,14 @@
 {
-  "name": "green-legacy",
+  "name": "green-legacy-frontend",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
-    "build": "cd frontend && npm run build && cd ../backend && npm run build",
-    "start": "cd backend && npm start",
-    "test": "cd frontend && npm test && cd ../backend && npm test",
-    "admin:smoke": "node ./scripts/admin-smoke-test.js"
+    "dev": "vite",
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -44,25 +44,17 @@
     "@types/history": "^4.7.11",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.13.1",
-    "bcryptjs": "^3.0.2",
-    "body-parser": "^2.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "cors": "^2.8.5",
     "date-fns": "^3.6.0",
-    "dotenv": "^17.2.3",
     "embla-carousel-react": "^8.6.0",
-    "express": "^5.1.0",
     "framer-motion": "^12.23.24",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
-    "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.3",
     "lucide-react": "^0.462.0",
-    "mongoose": "^8.19.2",
     "next-themes": "^0.3.0",
-    "nodemailer": "^7.0.10",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
@@ -90,24 +82,10 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
-    "lovable-tagger": "^1.1.10",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^5.4.19"
-  },
-  "description": "**URL**: https://lovable.dev/projects/3f4412a7-c0fd-4e15-9917-059a531c57a9",
-  "main": "eslint.config.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pranayworks/legacy-grow-plant.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pranayworks/legacy-grow-plant/issues"
-  },
-  "homepage": "https://github.com/pranayworks/legacy-grow-plant#readme"
+  }
 }
