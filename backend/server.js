@@ -50,20 +50,8 @@ function sendAsExcel(res, data, filename) {
   return res.send(buffer);
 }
 
-// Middleware
-const auth = (req, res, next) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ error: 'No token, authorization denied' });
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ error: 'Token is not valid' });
-  }
-};
+// Import auth middleware
+import auth from './middleware/auth.js';
 
 // Routes - POST
 app.post('/contact', async (req, res) => {
